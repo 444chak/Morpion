@@ -16,7 +16,7 @@ setup(
     name = "Morpion",
     version = "1",
     description = "Morpion pygame",
-    author = "@chvkib.mp3",
+    author = "@444chak",
     options = dict(build_exe = buildOptions),
     executables = executables
 )
