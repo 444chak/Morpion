@@ -1,3 +1,7 @@
+"""
+Morpion on shell
+"""
+
 from random import randint, choice
 
 

@@ -1,11 +1,11 @@
 # commande à taper en ligne de commande après la sauvegarde de ce fichier:
 # python setup.py build
+
 from cx_Freeze import setup, Executable
   
 executables = [
         Executable(script = "main.py",icon = "logo.ico", base = "Win32GUI" )
 ]
-# ne pas mettre "base = ..." si le programme n'est pas en mode graphique, comme c'est le cas pour chiffrement.py.
   
 buildOptions = dict( 
         includes = ["pygame","random"],
@@ -16,7 +16,7 @@ setup(
     name = "Morpion",
     version = "1",
     description = "Morpion pygame",
-    author = "@chvkib.mp3",
+    author = "@444chak",
     options = dict(build_exe = buildOptions),
     executables = executables
 )

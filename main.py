@@ -1,51 +1,101 @@
+"""
+NAME : MORPION
+AUTHOR : @444chak
+LANG : FR
+"""
+
+# librairies
 import pygame 
 from pygame.locals import * 
 from random import randint, choice
+
+
+# window
 pygame.init() 
 window = pygame.display.set_mode((640,480)) 
-pygame.display.set_caption("Morpion")
-icon = pygame.image.load("logo.png")
+pygame.display.set_caption("Morpion") # window title
+icon = pygame.image.load("logo.png") # window icon
 pygame.display.set_icon(icon)
-background = pygame.image.load("bg.png")
+background = pygame.image.load("bg.png") # background (avec grille)
 opened = True
 
-font = pygame.font.Font("trebuc.ttf", 72)
+
+# fonts defined
+font = pygame.font.Font("trebuc.ttf", 72) # titles
+font2 = pygame.font.Font("trebuc.ttf", 25) # tours & exit & restart
+font3 = pygame.font.Font("trebuc.ttf", 50) # result
+
+# mode choice fonts
 vs1 = font.render("1vs1", True, pygame.Color("#FFFFFF"))
 vsIA = font.render("1vsIA", True, pygame.Color("#FFFFFF"))
 
-
-
-
-font2 = pygame.font.Font("trebuc.ttf", 25)
+# tour actuel fonts
 tour = font2.render("Tour :", True, pygame.Color("#FFFFFF"))
 tour1 = font2.render("JOUEUR 1 (X)", True, pygame.Color("#FF0000"))
 tour2 = font2.render("JOUEUR 2 (O)", True, pygame.Color("#00FF00"))
-
 tour3 = font2.render("IA (O)", True, pygame.Color("#00FF00"))
 
+# exit & restart fonts
 exit = font2.render("fermer", True, pygame.Color("#FFFFFF"))
 restart = font2.render("restart", True, pygame.Color("#FFFFFF"))
 
-font3 = pygame.font.Font("trebuc.ttf", 50)
-
+# result fonts
 win1 = font3.render("VICTOIRE - JOUEUR 1", True, pygame.Color("#FF0000"))
 win2 = font3.render("VICTOIRE - JOUEUR 2", True, pygame.Color("#00FF00"))
 win3 = font3.render("VICTOIRE - IA", True, pygame.Color("#00FF00"))
 egalite = font3.render("ÉGALITÉ", True, pygame.Color("#FFFF00"))
+
+# players symbols fonts
+player = [
+    ("X", font.render("X", True, pygame.Color("#FF0000"))),
+    ("O", font.render("O", True, pygame.Color("#00FF00")))
+]
+
+# mode :
+# -1 = not in game
+# 0 = in game 1vs1
+# 1 = in game 1vsIA
 mode = -1
 
-player = [("X", font.render("X", True, pygame.Color("#FF0000"))),
-("O", font.render("O", True, pygame.Color("#00FF00")))]
+####################METHOD####################
 
 class Morpion:
     def __init__(self, state, tour=-1):
+        """
+        Initialise le jeu
+        ARG : 
+            state : état de la partie (-1 : pas en jeu
+                                        1 : 1vs1
+                                        2 : 1vsIA
+                                        3 : Victoire IA
+                                        4 : Victoire Joueur)
+            tour : 0 ou 1 selon le joueur
+        """
         self.grille = [' ' for i in range(10)]
         self.state = state
         self.tour = tour
         self.plein = False
     def end(self, winner):
+        """
+        Défini le gagnant
+
+        ARG : 
+            winner : gagnant ("X" ou "O")
+        """
         self.winner = winner
+
     def game(self, player, place):
+        """
+        Jouer sur une case
+        
+        ARG : 
+            player : Symbole du joueur qui peut gagner ("X" ou "O")
+            place : case à laquelle le joueur joue
+        
+        RETURN : 
+            True : Lorsque le joueur a jouer
+            False : Lorsque la case est occupée, le joueur n'a pas jouer
+        """
         if play.win() == False:
             if self.grille[place] == " ":
                 self.grille[place] = player[0]
@@ -55,7 +105,13 @@ class Morpion:
                     play.tour = 1
                 return True
             return False
+
     def win(self): 
+        """
+        Check winner
+
+        RETURN : Winner
+        """
         if self.grille[1]== self.grille[2] and self.grille[2]==self.grille[3] and self.grille[1]!=" ":
             return self.grille[1]
         if self.grille[4]== self.grille[5] and self.grille[4]==self.grille[6] and self.grille[4]!=" ":
@@ -75,31 +131,61 @@ class Morpion:
         if self.grille.count(' ')==1:
             return ' '
         return False
-    def legit(self): #Renvoie les cases libres.
+
+    def legit(self):
+        """
+        RETURN : cases libres de la grille
+        """
         self.res = []
         for i in range(1,10):
             if self.grille[i]==' ':
                 self.res.append(i)
         return self.res
-    def canWin2(self, symb, a, b,c):
+
+    def PreciseCanWin(self, symb, a, b,c):
+        """
+        Case à jouer pour gagner selon triplet
+
+        ARG : 
+            symb : Symbole du joueur qui peut gagner ("X" ou "O")
+            a,b,c : Triplet des cases à vérifier
+        
+        RETURN : Case à jouer pour gagner
+        """
         possibles = self.legit()
         if (self.grille[a] == symb and self.grille[b] == symb) or (self.grille[a] == symb and self.grille[c] == symb) or (self.grille[b] == symb and self.grille[c] == symb):
             if a in possibles: return a
             elif b in possibles: return b
             elif c in possibles: return c
+
     def canWin(self,symb):
+        """
+        Cases possibles pour gagner
+
+        ARG : 
+            symb : Symbole du joueur qui peut gagner ("X" ou "O")
+
+        RETURN : Liste des cases possibles pour gagner
+        """
         cases = []
-        cases.append(self.canWin2(symb, 1, 2, 3))
-        cases.append(self.canWin2(symb, 4, 5, 6))
-        cases.append(self.canWin2(symb, 7, 8, 9))
-        cases.append(self.canWin2(symb, 1, 4, 7))
-        cases.append(self.canWin2(symb, 2, 5, 8))
-        cases.append(self.canWin2(symb, 3, 6, 9))
-        cases.append(self.canWin2(symb, 1, 5, 9))
-        cases.append(self.canWin2(symb, 3, 5, 7))
+        cases.append(self.PreciseCanWin(symb, 1, 2, 3))
+        cases.append(self.PreciseCanWin(symb, 4, 5, 6))
+        cases.append(self.PreciseCanWin(symb, 7, 8, 9))
+        cases.append(self.PreciseCanWin(symb, 1, 4, 7))
+        cases.append(self.PreciseCanWin(symb, 2, 5, 8))
+        cases.append(self.PreciseCanWin(symb, 3, 6, 9))
+        cases.append(self.PreciseCanWin(symb, 1, 5, 9))
+        cases.append(self.PreciseCanWin(symb, 3, 5, 7))
         for i in cases:
             if i != None: return i
-    def cpuJoue(self, symb): #L'ordinateur joue au hasard.
+
+    def cpuJoue(self, symb): 
+        """
+        L'ordinateur joue
+
+        ARG : 
+            symb : Symbole du joueur qui peut gagner ("X" ou "O")
+        """
         self.cases = 0
         for i in self.grille:
             if i == "X": self.cases +=1
@@ -146,11 +232,11 @@ class Morpion:
             n = randint(0,len(possibles)-1)
             self.game(symb,possibles[n])
 
+
+# Coordonnées des cases sur la grille
 place = [(220, 120), (300, 120),(380, 120),  (220, 200),(300, 200) , (380, 200),(220, 280) ,  (300, 280),(380, 280)]
 
-# 0 = pas commencé
-# 1 = en cours 1vs1
-# 2 = en cours 1vsIA
+####################JEU####################
 
 play = Morpion(0)
 
