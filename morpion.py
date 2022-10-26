@@ -5,6 +5,8 @@ Morpion on shell
 from random import randint, choice
 
 
+# Graphique
+
 
 grille = [' ' for i in range(10)] #Initialisation de la grille. ' ' pour case vide.
 
